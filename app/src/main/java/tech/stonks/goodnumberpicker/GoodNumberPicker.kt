@@ -1,6 +1,5 @@
 package tech.stonks.goodnumberpicker
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
@@ -12,9 +11,6 @@ import tech.stonks.goodnumberpicker.item.NumberPickerItem
 import tech.stonks.goodnumberpicker.item.TextNumberPickerItem
 import tech.stonks.goodnumberpicker.overlay.LinesPickerOverlay
 import tech.stonks.goodnumberpicker.overlay.PickerOverlay
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
 
 class GoodNumberPicker : View {
     constructor(context: Context?) : super(context)
@@ -25,12 +21,7 @@ class GoodNumberPicker : View {
         defStyleAttr
     )
 
-    private var _animator: ValueAnimator = ValueAnimator.ofInt(0, 100).apply {
-        duration = 600
-        addUpdateListener {
-            invalidate()
-        }
-    }
+    private val _scrollHandler = ScrollHandler(context)
 
     var items: List<NumberPickerItem> = List(10) { TextNumberPickerItem(it.toString()) }
         set(value) {
@@ -38,7 +29,6 @@ class GoodNumberPicker : View {
             field = value
         }
     var pickerOverlay: PickerOverlay = LinesPickerOverlay()
-
 
     var visibleItems: Int = 3
         set(value) {
@@ -52,20 +42,24 @@ class GoodNumberPicker : View {
     private var _scrolledItems: Int = 0
     private var _allItemsHeight: Int = 0
 
+    init {
+        isScrollContainer = true
+        setOnTouchListener(_scrollHandler)
+    }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         _itemHeight = calculateItemHeight()
+        _scrollHandler.roundToValue = _itemHeight
         _centerItemRect = getCenterItemRect()
         _allItemsHeight = calculateAllItemsHeight()
     }
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-        currentValue = (_animator.animatedValue as Int) % _allItemsHeight
+        currentValue = _scrollHandler.currentValue % _allItemsHeight
         _scrolledItems = currentValue / _itemHeight
         val items = getItemsToDraw()
-        println("items: $items, currentValue: $currentValue, _scrolledItems: $_scrolledItems")
         for (index in items.indices) {
             items[index].draw(
                 canvas,
@@ -75,30 +69,6 @@ class GoodNumberPicker : View {
             )
         }
         pickerOverlay.draw(canvas, _centerItemRect)
-    }
-
-    var actionDownTime: Long = 0
-    var actionDownY: Long = 0
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return when (event?.action) {
-            MotionEvent.ACTION_DOWN -> {
-                actionDownTime = System.currentTimeMillis()
-                actionDownY = event.y.toLong()
-                true
-            }
-            MotionEvent.ACTION_UP -> {
-                val diffY = event.y - actionDownY
-                val diffTime = System.currentTimeMillis() - actionDownTime
-                if ((diffY > 50 || diffY < -50) && diffTime > 100) {
-                    var endValue: Int = currentValue + diffY.toInt()
-                    endValue = (endValue / _itemHeight.toFloat()).roundToInt() * _itemHeight
-                    _animator.setIntValues(currentValue, endValue)
-                    _animator.start()
-                }
-                true
-            }
-            else -> super.onTouchEvent(event)
-        }
     }
 
     private fun getItemsToDraw(): List<NumberPickerItem> {
@@ -122,4 +92,17 @@ class GoodNumberPicker : View {
     private fun calculateAllItemsHeight(): Int {
         return items.size * _itemHeight
     }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        _scrollHandler.setScrollListener {
+            invalidate()
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        _scrollHandler.setScrollListener { }
+        super.onDetachedFromWindow()
+    }
+
 }
