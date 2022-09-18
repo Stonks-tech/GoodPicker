@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
 import tech.stonks.goodnumberpicker.common.getRepeatableRange
 import tech.stonks.goodnumberpicker.item.NumberPickerItem
@@ -39,6 +38,11 @@ class GoodNumberPicker : View {
     private var _itemHeight: Int = calculateItemHeight()
     private var currentValue: Int = 0
     private var _centerItemRect: Rect = getCenterItemRect()
+    set(value) {
+        field = value
+        _scrollHandler.incrementYRange = value.bottom .. height
+        _scrollHandler.decrementYRange = 0 .. value.top
+    }
     private var _scrolledItems: Int = 0
     private var _allItemsHeight: Int = 0
 
@@ -50,7 +54,7 @@ class GoodNumberPicker : View {
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         _itemHeight = calculateItemHeight()
-        _scrollHandler.roundToValue = _itemHeight
+        _scrollHandler.itemHeight = _itemHeight
         _centerItemRect = getCenterItemRect()
         _allItemsHeight = calculateAllItemsHeight()
     }

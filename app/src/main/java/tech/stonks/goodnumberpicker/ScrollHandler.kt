@@ -14,7 +14,11 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
     companion object {
         private const val VELOCITY_THRESHOLD = 200
         private const val ROUND_DURATION = 300
+        private const val DELTA_THRESHOLD = 50
     }
+
+    var incrementYRange: IntRange = 0..0
+    var decrementYRange: IntRange = 0..0
 
     private var _scrollListener: ScrollListener = {}
     private val _flingInterpolator = OvershootInterpolator(1f)
@@ -33,16 +37,17 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
     /**
      * Final Scroll value will be rounded to value divisible by this number
      */
-    var roundToValue: Int = 1
+    var itemHeight: Int = 1
     private var _previousY: Int = 0
+    private var _startY: Int = 0
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
                 _velocityTracker = VelocityTracker.obtain()
                 _velocityTracker.addMovement(event)
                 _previousY = event.y.toInt()
+                _startY = event.y.toInt()
             }
             MotionEvent.ACTION_MOVE -> {
                 _velocityTracker.addMovement(event)
@@ -55,10 +60,15 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
                 _velocityTracker.addMovement(event)
                 _previousY = 0
                 _velocityTracker.computeCurrentVelocity(100)
-                println("Velocity: ${_velocityTracker.yVelocity}")
-                if(abs(_velocityTracker.yVelocity) > VELOCITY_THRESHOLD) {
+                if(abs(event.y - _startY) < DELTA_THRESHOLD) {
+                    if(event.y.toInt() in incrementYRange) {
+                        moveBy(-1)
+                    } else if(event.y.toInt() in decrementYRange) {
+                        moveBy(1)
+                    }
+                } else if (abs(_velocityTracker.yVelocity) > VELOCITY_THRESHOLD) {
                     fling(_velocityTracker.yVelocity.toInt())
-                }else{
+                } else {
                     roundToNearestItem()
                 }
                 _velocityTracker.recycle()
@@ -67,21 +77,32 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
         return true
     }
 
+    private fun moveBy(itemsCount: Int) {
+        animateTo(currentValue + (itemsCount * itemHeight))
+    }
+
     private fun fling(velocity: Int) {
         _scrollAnimator.cancel()
         _scrollAnimator.interpolator = _flingInterpolator
         _scrollAnimator.duration = (abs(velocity)).toLong()
-        _scrollAnimator.setIntValues(currentValue, (currentValue + velocity).roundToNearest(roundToValue))
+        _scrollAnimator.setIntValues(
+            currentValue,
+            (currentValue + velocity).roundToNearest(itemHeight)
+        )
         _scrollAnimator.start()
     }
 
     private fun roundToNearestItem() {
+        animateTo(currentValue.roundToNearest(itemHeight))
+    }
+
+    private fun animateTo(value: Int) {
         _scrollAnimator.cancel()
         _scrollAnimator.interpolator = _roundInterpolator
         _scrollAnimator.duration = ROUND_DURATION.toLong()
         _scrollAnimator.setIntValues(
             currentValue,
-            currentValue.roundToNearest(roundToValue)
+            value
         )
         _scrollAnimator.start()
 
