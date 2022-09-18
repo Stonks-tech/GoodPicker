@@ -44,6 +44,7 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
+                v?.parent?.requestDisallowInterceptTouchEvent(true)
                 _velocityTracker = VelocityTracker.obtain()
                 _velocityTracker.addMovement(event)
                 _previousY = event.y.toInt()
@@ -57,10 +58,12 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
                 _scrollListener(currentValue)
             }
             MotionEvent.ACTION_UP -> {
+                v?.parent?.requestDisallowInterceptTouchEvent(false)
                 _velocityTracker.addMovement(event)
                 _previousY = 0
                 _velocityTracker.computeCurrentVelocity(100)
                 if(abs(event.y - _startY) < DELTA_THRESHOLD) {
+                    v?.performClick()
                     if(event.y.toInt() in incrementYRange) {
                         moveBy(-1)
                     } else if(event.y.toInt() in decrementYRange) {
