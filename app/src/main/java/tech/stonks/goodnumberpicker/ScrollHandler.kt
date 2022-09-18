@@ -7,6 +7,7 @@ import android.view.VelocityTracker
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
+import androidx.core.animation.addListener
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -21,6 +22,7 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
     var decrementYRange: IntRange = 0..0
 
     private var _scrollListener: ScrollListener = {}
+    private var _onAnimationEnd: () -> Unit = {}
     private val _flingInterpolator = OvershootInterpolator(1f)
     private val _roundInterpolator = DecelerateInterpolator(2.5f)
     private val _scrollAnimator: ValueAnimator = ValueAnimator().apply {
@@ -28,6 +30,9 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
             currentValue = it.animatedValue as Int
             _scrollListener(currentValue)
         }
+        addListener(onEnd = {
+            _onAnimationEnd()
+        })
     }
     private lateinit var _velocityTracker: VelocityTracker
 
@@ -38,6 +43,10 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
      * Final Scroll value will be rounded to value divisible by this number
      */
     var itemHeight: Int = 1
+    set(value) {
+        field = value
+        currentValue = itemHeight
+    }
     private var _previousY: Int = 0
     private var _startY: Int = 0
 
@@ -113,6 +122,10 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
 
     private fun Int.roundToNearest(roundTo: Int): Int {
         return ((this / roundTo.toFloat()).roundToInt() * roundTo)
+    }
+
+    fun setOnAnimationEndListener(listener: () -> Unit) {
+        _onAnimationEnd = listener
     }
 
     fun setScrollListener(scrollListener: ScrollListener) {

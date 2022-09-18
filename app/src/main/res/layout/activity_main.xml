@@ -23,22 +23,7 @@
             android:layout_marginHorizontal="16dp">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="Hello World!"
-                android:textSize="24sp" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:cardElevation="4dp"
-            android:layout_marginVertical="8dp"
-            android:layout_marginHorizontal="16dp">
-
-            <TextView
+                android:id="@+id/text_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"

@@ -9,6 +9,7 @@ import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
 import androidx.annotation.FontRes
+import tech.stonks.goodnumberpicker.GoodNumberPicker.TextStyle.Companion.DEFAULT_TEXT_COLOR
 import tech.stonks.goodnumberpicker.common.getColorOrFetchFromResource
 import tech.stonks.goodnumberpicker.common.getDimensionOrFetchFromResource
 import tech.stonks.goodnumberpicker.common.getRepeatableRange
@@ -18,8 +19,10 @@ import tech.stonks.goodnumberpicker.item.NumberPickerItem
 import tech.stonks.goodnumberpicker.item.TextNumberPickerItem
 import tech.stonks.goodnumberpicker.overlay.LinesPickerOverlay
 import tech.stonks.goodnumberpicker.overlay.PickerOverlay
+import kotlin.math.roundToInt
 
 class GoodNumberPicker : View {
+
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
         fetchAttributes(attrs, 0)
@@ -37,6 +40,13 @@ class GoodNumberPicker : View {
 
     private val _scrollHandler = ScrollHandler(context)
 
+    private var _lastPublishedItem: Int = -1
+
+    /**
+     * If true updates are published only when scroll animation finishes
+     * If false updates are published each time selected item changes (even during animating)
+     */
+    var publishUpdatesOnlyOnAnimationEnd: Boolean = true
     var items: List<NumberPickerItem> = List(10) {
         TextNumberPickerItem(
             context,
@@ -47,6 +57,19 @@ class GoodNumberPicker : View {
         set(value) {
             _allItemsHeight = calculateAllItemsHeight()
             field = value
+        }
+
+    var onSelectedPositionChanged: ((Int) -> Unit) = {}
+    val selectedPosition: Int
+        get() {
+            val value = -((currentValue / _itemHeight.toFloat()).roundToInt() - 1)
+            return if (value < 0) {
+                items.size + value
+            } else if (value >= items.size) {
+                value - items.size
+            } else {
+                value
+            }
         }
     var pickerOverlay: PickerOverlay = LinesPickerOverlay()
 
@@ -122,12 +145,27 @@ class GoodNumberPicker : View {
         super.onAttachedToWindow()
         _scrollHandler.setScrollListener {
             invalidate()
+            if (!publishUpdatesOnlyOnAnimationEnd) {
+                publishCurrentPosition()
+            }
+        }
+        _scrollHandler.setOnAnimationEndListener {
+            publishCurrentPosition()
         }
     }
 
     override fun onDetachedFromWindow() {
         _scrollHandler.setScrollListener { }
+        _scrollHandler.setOnAnimationEndListener { }
         super.onDetachedFromWindow()
+    }
+
+    private fun publishCurrentPosition() {
+        val newItem = selectedPosition
+        if (_lastPublishedItem != newItem) {
+            _lastPublishedItem = newItem
+            onSelectedPositionChanged(newItem)
+        }
     }
 
     private fun fetchAttributes(attrs: AttributeSet?, defStyleAttr: Int) {
@@ -139,10 +177,17 @@ class GoodNumberPicker : View {
                     textColor = getColorOrFetchFromResource(
                         context,
                         R.styleable.GoodNumberPicker_android_textColor,
-                        Color.BLACK
+                        DEFAULT_TEXT_COLOR
                     ),
-                    textSize = getDimensionOrFetchFromResource(context, R.styleable.GoodNumberPicker_android_textSize, 50f),
-                    fontWeight = getInteger(R.styleable.GoodNumberPicker_android_textFontWeight, 500)
+                    textSize = getDimensionOrFetchFromResource(
+                        context,
+                        R.styleable.GoodNumberPicker_android_textSize,
+                        TextStyle.DEFAULT_TEXT_SIZE
+                    ),
+                    fontWeight = getInteger(
+                        R.styleable.GoodNumberPicker_android_textFontWeight,
+                        TextStyle.DEFAULT_FONT_WEIGHT
+                    )
                 )
             )
         }
@@ -171,14 +216,21 @@ class GoodNumberPicker : View {
         val textColor: Int,
         @Dimension
         val textSize: Float,
+        //This will be applied only if API >= 28
+        //If you want to apply various font weights on older android versions use separate font
+        //resources for each weight
         val fontWeight: Int
     ) {
         companion object {
+            const val DEFAULT_FONT_WEIGHT = 400
+            const val DEFAULT_TEXT_SIZE = 50f
+            const val DEFAULT_TEXT_COLOR = Color.BLACK
+
             val default = TextStyle(
                 font = null,
-                textColor = Color.BLACK,
-                textSize = 50f,
-                fontWeight = 500
+                textColor = DEFAULT_TEXT_COLOR,
+                textSize = DEFAULT_TEXT_SIZE,
+                fontWeight = DEFAULT_FONT_WEIGHT
             )
         }
     }
