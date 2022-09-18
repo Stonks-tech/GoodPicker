@@ -149,6 +149,7 @@ class GoodNumberPicker : View {
         items.forEach {
             it.styleChanged(_style)
         }
+        visibleItems = _style.visibleItems
     }
 
     data class Style(
