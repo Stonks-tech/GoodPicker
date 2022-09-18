@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GoodNumberPicker">
+        <attr name="android:font" format="reference"/>
+        <attr name="android:textColor" format="color|reference"/>
+        <attr name="android:textSize" format="dimension|reference"/>
+        <attr name="android:textFontWeight" format="integer"/>
+        <attr name="visibleItems" format="integer"/>
+    </declare-styleable>
+</resources>

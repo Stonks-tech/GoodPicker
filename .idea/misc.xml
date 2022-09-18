@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/font/raleway.xml" value="0.41574074074074074" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.6807291666666667" />
         <entry key="app/src/main/res/layout/item_picker.xml" value="0.69375" />
         <entry key="app/src/main/res/layout/view_picker.xml" value="0.6947916666666667" />
