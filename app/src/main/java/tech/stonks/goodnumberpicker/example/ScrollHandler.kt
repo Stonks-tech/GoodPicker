@@ -1,4 +1,4 @@
-package tech.stonks.goodnumberpicker
+package tech.stonks.goodnumberpicker.example
 
 import android.animation.ValueAnimator
 import android.content.Context

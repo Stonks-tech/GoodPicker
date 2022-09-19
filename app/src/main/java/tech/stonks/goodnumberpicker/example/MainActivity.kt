@@ -1,8 +1,9 @@
-package tech.stonks.goodnumberpicker
+package tech.stonks.goodnumberpicker.example
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
+import tech.stonks.goodnumberpicker.example.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

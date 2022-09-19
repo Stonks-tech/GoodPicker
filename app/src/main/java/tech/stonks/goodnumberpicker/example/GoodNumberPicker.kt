@@ -1,4 +1,4 @@
-package tech.stonks.goodnumberpicker
+package tech.stonks.goodnumberpicker.example
 
 import android.content.Context
 import android.graphics.Canvas
@@ -9,16 +9,17 @@ import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
 import androidx.annotation.FontRes
-import tech.stonks.goodnumberpicker.GoodNumberPicker.TextStyle.Companion.DEFAULT_TEXT_COLOR
-import tech.stonks.goodnumberpicker.common.getColorOrFetchFromResource
-import tech.stonks.goodnumberpicker.common.getDimensionOrFetchFromResource
-import tech.stonks.goodnumberpicker.common.getRepeatableRange
-import tech.stonks.goodnumberpicker.common.getResourceIdOrNull
-import tech.stonks.goodnumberpicker.common.obtainAttributes
-import tech.stonks.goodnumberpicker.item.NumberPickerItem
-import tech.stonks.goodnumberpicker.item.TextNumberPickerItem
-import tech.stonks.goodnumberpicker.overlay.LinesPickerOverlay
-import tech.stonks.goodnumberpicker.overlay.PickerOverlay
+import tech.stonks.goodnumberpicker.example.R
+import tech.stonks.goodnumberpicker.example.GoodNumberPicker.TextStyle.Companion.DEFAULT_TEXT_COLOR
+import tech.stonks.goodnumberpicker.example.common.getColorOrFetchFromResource
+import tech.stonks.goodnumberpicker.example.common.getDimensionOrFetchFromResource
+import tech.stonks.goodnumberpicker.example.common.getRepeatableRange
+import tech.stonks.goodnumberpicker.example.common.getResourceIdOrNull
+import tech.stonks.goodnumberpicker.example.common.obtainAttributes
+import tech.stonks.goodnumberpicker.example.item.NumberPickerItem
+import tech.stonks.goodnumberpicker.example.item.TextNumberPickerItem
+import tech.stonks.goodnumberpicker.example.overlay.LinesPickerOverlay
+import tech.stonks.goodnumberpicker.example.overlay.PickerOverlay
 import kotlin.math.roundToInt
 
 class GoodNumberPicker : View {

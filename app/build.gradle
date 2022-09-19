@@ -7,7 +7,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "tech.stonks.goodnumberpicker"
+        applicationId "tech.stonks.goodnumberpicker.example"
         minSdk 26
         targetSdk 32
         versionCode 1

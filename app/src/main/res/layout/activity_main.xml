@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".example.MainActivity">
 
 <ScrollView
     android:layout_width="match_parent"
@@ -48,7 +48,7 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <tech.stonks.goodnumberpicker.GoodNumberPicker
+        <tech.stonks.goodnumberpicker.example.GoodNumberPicker
             android:id="@+id/number_picker"
             android:textColor="#ff0000"
             android:layout_marginHorizontal="16dp"
