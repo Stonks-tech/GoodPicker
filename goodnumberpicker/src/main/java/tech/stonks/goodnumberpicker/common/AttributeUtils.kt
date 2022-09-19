@@ -5,11 +5,13 @@ import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import tech.stonks.goodnumberpicker.R
 
 fun View.obtainAttributes(attrs: AttributeSet?, defStyleAttr: Int, block: TypedArray.() -> Unit) {
-    context.obtainStyledAttributes(attrs, R.styleable.GoodNumberPicker, defStyleAttr, 0).use {
+    context.obtainStyledAttributes(attrs, R.styleable.GoodNumberPicker, defStyleAttr, 0).let {
         it.block()
+        it.recycle()
     }
 }
 
@@ -23,8 +25,8 @@ fun TypedArray.getColorOrFetchFromResource(
     @ColorInt defValue: Int
 ): Int {
     return if (hasValue(index)) getColor(index, defValue) else try {
-        context.getColor(
-            getResourceIdOrNull(
+        ContextCompat.getColor(
+            context, getResourceIdOrNull(
                 index
             )!!
         )

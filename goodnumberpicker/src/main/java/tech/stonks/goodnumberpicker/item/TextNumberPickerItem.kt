@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.os.Build
+import androidx.core.content.res.ResourcesCompat
 import tech.stonks.goodnumberpicker.GoodNumberPicker
 
 class TextNumberPickerItem(
@@ -48,7 +49,8 @@ class TextNumberPickerItem(
             color = style.textColor
             textSize = style.textSize
             typeface = if (style.font != null) {
-                val font = _context.resources.getFont(style.font)
+
+                val font = ResourcesCompat.getFont(_context, style.font)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     Typeface.create(
                         font,
