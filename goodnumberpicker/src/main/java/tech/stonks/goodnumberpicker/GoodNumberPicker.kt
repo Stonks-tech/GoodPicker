@@ -9,7 +9,9 @@ import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
 import androidx.annotation.FontRes
+import tech.stonks.goodnumberpicker.GoodNumberPicker.TextStyle.Companion.DEFAULT_OVERLAY_COLOR
 import tech.stonks.goodnumberpicker.GoodNumberPicker.TextStyle.Companion.DEFAULT_TEXT_COLOR
+import tech.stonks.goodnumberpicker.GoodNumberPicker.TextStyle.Companion.DEFAULT_VISIBLE_ITEMS
 import tech.stonks.goodnumberpicker.common.getColorOrFetchFromResource
 import tech.stonks.goodnumberpicker.common.getDimensionOrFetchFromResource
 import tech.stonks.goodnumberpicker.common.getRepeatableRange
@@ -21,7 +23,7 @@ import tech.stonks.goodnumberpicker.overlay.LinesPickerOverlay
 import tech.stonks.goodnumberpicker.overlay.PickerOverlay
 import kotlin.math.roundToInt
 
-class GoodNumberPicker : View {
+open class GoodNumberPicker : View {
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
@@ -36,7 +38,7 @@ class GoodNumberPicker : View {
         fetchAttributes(attrs, defStyleAttr)
     }
 
-    private var _style: Style = Style.default()
+    var style: Style = Style.default
 
     private val _scrollHandler = ScrollHandler(context)
 
@@ -51,7 +53,7 @@ class GoodNumberPicker : View {
         TextNumberPickerItem(
             context,
             it.toString(),
-            _style
+            style
         )
     }
         set(value) {
@@ -62,7 +64,7 @@ class GoodNumberPicker : View {
     var onSelectedPositionChanged: ((Int) -> Unit) = {}
     val selectedPosition: Int
         get() {
-            val value = -((currentValue / _itemHeight.toFloat()).roundToInt() - 1)
+            val value = -((_currentValue / _itemHeight.toFloat()).roundToInt() - 1)
             return if (value < 0) {
                 items.size + value
             } else if (value >= items.size) {
@@ -80,7 +82,7 @@ class GoodNumberPicker : View {
             invalidate()
         }
     private var _itemHeight: Int = calculateItemHeight()
-    private var currentValue: Int = 0
+    private var _currentValue: Int = 0
     private var _centerItemRect: Rect = getCenterItemRect()
         set(value) {
             field = value
@@ -105,13 +107,13 @@ class GoodNumberPicker : View {
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-        currentValue = _scrollHandler.currentValue % _allItemsHeight
-        _scrolledItems = currentValue / _itemHeight
+        _currentValue = _scrollHandler.currentValue % _allItemsHeight
+        _scrolledItems = _currentValue / _itemHeight
         val items = getItemsToDraw()
         for (index in items.indices) {
             items[index].draw(
                 canvas,
-                ((index - _scrolledItems) * _itemHeight.toFloat()) + currentValue,
+                ((index - _scrolledItems) * _itemHeight.toFloat()) + _currentValue,
                 width,
                 _itemHeight
             )
@@ -170,9 +172,17 @@ class GoodNumberPicker : View {
 
     private fun fetchAttributes(attrs: AttributeSet?, defStyleAttr: Int) {
         obtainAttributes(attrs, defStyleAttr) {
-            _style = Style(
-                getInteger(R.styleable.GoodNumberPicker_visibleItems, 3),
-                TextStyle(
+            style = Style(
+                visibleItems = getInteger(
+                    R.styleable.GoodNumberPicker_visibleItems,
+                    DEFAULT_VISIBLE_ITEMS
+                ),
+                overlayColor = getColorOrFetchFromResource(
+                    context,
+                    R.styleable.GoodNumberPicker_overlayColor,
+                    DEFAULT_OVERLAY_COLOR
+                ),
+                textStyle = TextStyle(
                     font = getResourceIdOrNull(R.styleable.GoodNumberPicker_android_font),
                     textColor = getColorOrFetchFromResource(
                         context,
@@ -192,18 +202,22 @@ class GoodNumberPicker : View {
             )
         }
         items.forEach {
-            it.styleChanged(_style)
+            it.styleChanged(style)
         }
-        visibleItems = _style.visibleItems
+        pickerOverlay.styleChanged(style)
+        visibleItems = style.visibleItems
     }
 
     data class Style(
         val visibleItems: Int,
+        @ColorInt
+        val overlayColor: Int,
         val textStyle: TextStyle
     ) {
         companion object {
-            fun default() = Style(
+            val default = Style(
                 visibleItems = 3,
+                overlayColor = DEFAULT_OVERLAY_COLOR,
                 textStyle = TextStyle.default
             )
         }
@@ -222,9 +236,11 @@ class GoodNumberPicker : View {
         val fontWeight: Int
     ) {
         companion object {
+            const val DEFAULT_VISIBLE_ITEMS = 3
             const val DEFAULT_FONT_WEIGHT = 400
             const val DEFAULT_TEXT_SIZE = 50f
             const val DEFAULT_TEXT_COLOR = Color.BLACK
+            const val DEFAULT_OVERLAY_COLOR = Color.BLACK
 
             val default = TextStyle(
                 font = null,

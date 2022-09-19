@@ -4,13 +4,21 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import tech.stonks.goodnumberpicker.GoodNumberPicker
 
 class LinesPickerOverlay : PickerOverlay {
 
+    private var _style: GoodNumberPicker.Style = GoodNumberPicker.Style.default
+
     private var _paint: Paint = Paint().apply {
         strokeWidth = 2f
-        color = Color.BLACK
+        color = _style.overlayColor
         style = Paint.Style.STROKE
+    }
+
+    override fun styleChanged(style: GoodNumberPicker.Style) {
+        _style = style
+        _paint.color = _style.overlayColor
     }
 
     override fun draw(canvas: Canvas, centerItemRect: Rect) {
