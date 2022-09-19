@@ -1,7 +1,7 @@
-package tech.stonks.goodnumberpicker.example.item
+package tech.stonks.goodnumberpicker.item
 
 import android.graphics.Canvas
-import tech.stonks.goodnumberpicker.example.GoodNumberPicker
+import tech.stonks.goodnumberpicker.GoodNumberPicker
 
 interface NumberPickerItem {
     fun draw(canvas: Canvas, y: Float, width: Int, height: Int)

@@ -1,11 +1,11 @@
-package tech.stonks.goodnumberpicker.example.common
+package tech.stonks.goodnumberpicker.common
 
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.ColorInt
-import tech.stonks.goodnumberpicker.example.R
+import tech.stonks.goodnumberpicker.R
 
 fun View.obtainAttributes(attrs: AttributeSet?, defStyleAttr: Int, block: TypedArray.() -> Unit) {
     context.obtainStyledAttributes(attrs, R.styleable.GoodNumberPicker, defStyleAttr, 0).use {

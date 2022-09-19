@@ -1,4 +1,4 @@
-package tech.stonks.goodnumberpicker.example.overlay
+package tech.stonks.goodnumberpicker.overlay
 
 import android.graphics.Canvas
 import android.graphics.Color

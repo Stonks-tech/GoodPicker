@@ -48,7 +48,7 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <tech.stonks.goodnumberpicker.example.GoodNumberPicker
+        <tech.stonks.goodnumberpicker.GoodNumberPicker
             android:id="@+id/number_picker"
             android:textColor="#ff0000"
             android:layout_marginHorizontal="16dp"

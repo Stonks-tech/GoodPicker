@@ -1,4 +1,4 @@
-package tech.stonks.goodnumberpicker.example.common
+package tech.stonks.goodnumberpicker.common
 
 fun <T> List<T>.getRepeatableRange(start: Int, end: Int): List<T> {
     return (start..end).map {

@@ -1,4 +1,4 @@
-package tech.stonks.goodnumberpicker.example.item
+package tech.stonks.goodnumberpicker.item
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,7 +6,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.os.Build
-import tech.stonks.goodnumberpicker.example.GoodNumberPicker
+import tech.stonks.goodnumberpicker.GoodNumberPicker
 
 class TextNumberPickerItem(
     private val _context: Context,
