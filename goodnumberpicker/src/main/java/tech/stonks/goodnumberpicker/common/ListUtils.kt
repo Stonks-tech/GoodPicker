@@ -2,10 +2,14 @@ package tech.stonks.goodnumberpicker.common
 
 fun <T> List<T>.getRepeatableRange(start: Int, end: Int): List<T> {
     return (start..end).map {
-        if(it < 0) {
-            this[this.size + it]
-        } else {
-            this[it % this.size]
-        }
+        this[it.toRepeatableIndex(this.size)]
+    }
+}
+
+fun Int.toRepeatableIndex(size: Int): Int {
+    return if(this < 0) {
+        size + this
+    } else {
+        this % size
     }
 }

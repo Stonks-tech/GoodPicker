@@ -17,6 +17,7 @@ import tech.stonks.goodnumberpicker.common.getDimensionOrFetchFromResource
 import tech.stonks.goodnumberpicker.common.getRepeatableRange
 import tech.stonks.goodnumberpicker.common.getResourceIdOrNull
 import tech.stonks.goodnumberpicker.common.obtainAttributes
+import tech.stonks.goodnumberpicker.common.toRepeatableIndex
 import tech.stonks.goodnumberpicker.item.NumberPickerItem
 import tech.stonks.goodnumberpicker.item.TextNumberPickerItem
 import tech.stonks.goodnumberpicker.overlay.LinesPickerOverlay
@@ -24,6 +25,11 @@ import tech.stonks.goodnumberpicker.overlay.PickerOverlay
 import kotlin.math.roundToInt
 
 open class GoodNumberPicker : View {
+
+    companion object {
+        //How many items will be added offscreen on each side
+        const val OFFSCREEN_ITEMS = 1
+    }
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
@@ -39,6 +45,13 @@ open class GoodNumberPicker : View {
     }
 
     var style: Style = Style.default
+        set(value) {
+            field = value
+            publishChangedStyle()
+            invalidate()
+        }
+
+    var itemFormatter: ItemFormatter = { _, item -> item }
 
     private val _scrollHandler = ScrollHandler(context)
 
@@ -64,19 +77,16 @@ open class GoodNumberPicker : View {
     var onSelectedPositionChanged: ((Int) -> Unit) = {}
     val selectedPosition: Int
         get() {
-            val value = -((_currentValue / _itemHeight.toFloat()).roundToInt() - 1)
-            return if (value < 0) {
-                items.size + value
-            } else if (value >= items.size) {
-                value - items.size
-            } else {
-                value
-            }
+            return drawPositionToAbsolutePosition(((visibleItems - 1) / 2))
         }
+
     var pickerOverlay: PickerOverlay = LinesPickerOverlay()
 
     var visibleItems: Int = 3
         set(value) {
+            if (value % 2 == 0) {
+                throw IllegalArgumentException("Visible items must be odd")
+            }
             field = value
             _itemHeight = calculateItemHeight()
             invalidate()
@@ -109,11 +119,15 @@ open class GoodNumberPicker : View {
         super.draw(canvas)
         _currentValue = _scrollHandler.currentValue % _allItemsHeight
         _scrolledItems = _currentValue / _itemHeight
-        val items = getItemsToDraw()
+        val itemRange = getItemsRangeToDraw()
+        val items = items.getRepeatableRange(itemRange.first, itemRange.last)
         for (index in items.indices) {
-            items[index].draw(
+            itemFormatter(
+                (itemRange.first + index).toRepeatableIndex(this.items.size),
+                items[index]
+            ).draw(
                 canvas,
-                ((index - _scrolledItems) * _itemHeight.toFloat()) + _currentValue,
+                ((index - _scrolledItems - OFFSCREEN_ITEMS) * _itemHeight.toFloat()) + _currentValue,
                 width,
                 _itemHeight
             )
@@ -121,11 +135,11 @@ open class GoodNumberPicker : View {
         pickerOverlay.draw(canvas, _centerItemRect)
     }
 
-    private fun getItemsToDraw(): List<NumberPickerItem> {
-        val totalVisibleItems = visibleItems + 3
-        val startIndex = -_scrolledItems
+    private fun getItemsRangeToDraw(): IntRange {
+        val totalVisibleItems = visibleItems + (OFFSCREEN_ITEMS * 2)
+        val startIndex = -_scrolledItems - OFFSCREEN_ITEMS
         val endIndex = startIndex + totalVisibleItems
-        return items.getRepeatableRange(startIndex, endIndex)
+        return startIndex..endIndex
     }
 
     private fun getCenterItemRect(): Rect {
@@ -201,6 +215,21 @@ open class GoodNumberPicker : View {
                 )
             )
         }
+        publishChangedStyle()
+    }
+
+    private fun drawPositionToAbsolutePosition(index: Int): Int {
+        val value = -((_currentValue / _itemHeight.toFloat()).roundToInt() - index)
+        return if (value < 0) {
+            items.size + value
+        } else if (value >= items.size) {
+            value - items.size
+        } else {
+            value
+        }
+    }
+
+    private fun publishChangedStyle() {
         items.forEach {
             it.styleChanged(style)
         }
