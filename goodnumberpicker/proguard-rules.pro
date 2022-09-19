@@ -19,3 +19,5 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keep class tech.stonks.goodnumberpicker.** { *; }
+-keepclassmembers class tech.stonks.goodnumberpicker.** { *; }
