@@ -10,8 +10,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val textView = findViewById<TextView>(R.id.text_view)
-        val numberPicker =
-            findViewById<tech.stonks.goodnumberpicker.GoodNumberPicker>(R.id.number_picker)
+        val numberPicker = findViewById<tech.stonks.goodnumberpicker.GoodNumberPicker>(
+            R.id.number_picker
+        )
         numberPicker.onSelectedPositionChanged = { position ->
             textView.text = "Position: $position"
         }

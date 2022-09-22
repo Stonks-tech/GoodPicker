@@ -46,6 +46,7 @@ open class GoodNumberPicker : View {
         fetchAttributes(attrs, defStyleAttr)
     }
 
+    /** Style of the picker, see `GoodNumberPicker.Style`. Basically it contains all the fields that are available in xml */
     var style: Style = Style.default
         set(value) {
             field = value
@@ -53,17 +54,16 @@ open class GoodNumberPicker : View {
             invalidate()
         }
 
+    /** Formatter that will be used to transform items */
     var itemFormatter: ItemFormatter = { _, item -> item }
-
-    private val _scrollHandler = ScrollHandler(context)
-
-    private var _lastPublishedItem: Int = -1
 
     /**
      * If true updates are published only when scroll animation finishes
      * If false updates are published each time selected item changes (even during animating)
      */
     var publishUpdatesOnlyOnAnimationEnd: Boolean = true
+
+    /** List of items that will be displayed in the picker. */
     var items: List<NumberPickerItem> = List(10) {
         TextNumberPickerItem(
             context,
@@ -76,14 +76,21 @@ open class GoodNumberPicker : View {
             field = value
         }
 
+    /** Listener that will be called when selected position changes. By default, it will be called when user stops scrolling.
+     * This behaviour might be changed with `publishUpdatesOnlyOnAnimationEnd` property
+     */
     var onSelectedPositionChanged: ((Int) -> Unit) = {}
+
+    /** You can set it to change selected position programmatically. */
     val selectedPosition: Int
         get() {
             return drawPositionToAbsolutePosition(((visibleItems - 1) / 2))
         }
 
+    /** Overlay that will be drawn above picked values. By default it will display two lines */
     var pickerOverlay: PickerOverlay = LinesPickerOverlay()
 
+    /** Number of visible items in the picker */
     var visibleItems: Int = 3
         set(value) {
             if (value % 2 == 0) {
@@ -93,6 +100,11 @@ open class GoodNumberPicker : View {
             _itemHeight = calculateItemHeight()
             invalidate()
         }
+
+    private val _scrollHandler = ScrollHandler(context)
+
+    private var _lastPublishedItem: Int = -1
+
     private var _itemHeight: Int = calculateItemHeight()
     private var _currentValue: Int = 0
     private var _centerItemRect: Rect = getCenterItemRect()
