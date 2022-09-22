@@ -15,20 +15,5 @@ class MainActivity : AppCompatActivity() {
         numberPicker.onSelectedPositionChanged = { position ->
             textView.text = "Position: $position"
         }
-        numberPicker.itemFormatter = { index, item ->
-            item.apply {
-                styleChanged(
-                    numberPicker.style.copy(
-                        textStyle = numberPicker.style.textStyle.copy(
-                            textColor = when(index % 3) {
-                                0 -> Color.RED
-                                1 -> Color.GREEN
-                                else -> Color.BLUE
-                            }
-                        )
-                    )
-                )
-            }
-        }
     }
 }

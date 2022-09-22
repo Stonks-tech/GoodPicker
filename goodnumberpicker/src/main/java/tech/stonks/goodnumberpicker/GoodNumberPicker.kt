@@ -1,6 +1,7 @@
 package tech.stonks.goodnumberpicker
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
@@ -13,6 +14,7 @@ import tech.stonks.goodnumberpicker.GoodNumberPicker.TextStyle.Companion.DEFAULT
 import tech.stonks.goodnumberpicker.GoodNumberPicker.TextStyle.Companion.DEFAULT_TEXT_COLOR
 import tech.stonks.goodnumberpicker.GoodNumberPicker.TextStyle.Companion.DEFAULT_VISIBLE_ITEMS
 import tech.stonks.goodnumberpicker.common.getColorOrFetchFromResource
+import tech.stonks.goodnumberpicker.common.getColorStateListOrFetchFromResource
 import tech.stonks.goodnumberpicker.common.getDimensionOrFetchFromResource
 import tech.stonks.goodnumberpicker.common.getRepeatableRange
 import tech.stonks.goodnumberpicker.common.getResourceIdOrNull
@@ -102,6 +104,31 @@ open class GoodNumberPicker : View {
     private var _scrolledItems: Int = 0
     private var _allItemsHeight: Int = 0
 
+    private var _textColorStateList: ColorStateList = ColorStateList.valueOf(DEFAULT_TEXT_COLOR)
+        set(value) {
+            field = value
+            itemFormatter = { index, item ->
+                item.apply {
+                    val color = if (index == selectedPosition) {
+                        value.getColorForState(
+                            intArrayOf(android.R.attr.state_selected),
+                            DEFAULT_TEXT_COLOR
+                        )
+                    } else {
+                        value.defaultColor
+                    }
+
+                    styleChanged(
+                        style.copy(
+                            textStyle = style.textStyle.copy(
+                                textColor = color
+                            )
+                        )
+                    )
+                }
+            }
+        }
+
     init {
         isScrollContainer = true
         setOnTouchListener(_scrollHandler)
@@ -186,6 +213,11 @@ open class GoodNumberPicker : View {
 
     private fun fetchAttributes(attrs: AttributeSet?, defStyleAttr: Int) {
         obtainAttributes(attrs, defStyleAttr) {
+            _textColorStateList = getColorStateListOrFetchFromResource(
+                context,
+                R.styleable.GoodNumberPicker_android_textColor,
+                DEFAULT_TEXT_COLOR
+            )
             style = Style(
                 visibleItems = getInteger(
                     R.styleable.GoodNumberPicker_visibleItems,

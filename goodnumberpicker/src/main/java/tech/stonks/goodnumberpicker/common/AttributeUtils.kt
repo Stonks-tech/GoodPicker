@@ -1,6 +1,7 @@
 package tech.stonks.goodnumberpicker.common
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.View
@@ -32,6 +33,26 @@ fun TypedArray.getColorOrFetchFromResource(
         )
     } catch (ex: Exception) {
         defValue
+    }
+}
+
+fun TypedArray.getColorStateListOrFetchFromResource(
+    context: Context,
+    index: Int,
+    @ColorInt defValue: Int
+): ColorStateList {
+    return if (hasValue(index)) {
+        (getColorStateList(index) ?: ColorStateList.valueOf(defValue))
+    } else try {
+        ColorStateList.valueOf(
+            ContextCompat.getColor(
+                context, getResourceIdOrNull(
+                    index
+                )!!
+            )
+        )
+    } catch (ex: Exception) {
+        ColorStateList.valueOf(defValue)
     }
 }
 
