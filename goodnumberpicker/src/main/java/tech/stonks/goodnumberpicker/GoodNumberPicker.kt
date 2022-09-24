@@ -82,6 +82,10 @@ open class GoodNumberPicker : View {
 
     /** Overlay that will be drawn above picked values. By default it will display two lines */
     var pickerOverlay: PickerOverlay = LinesPickerOverlay()
+    set(value) {
+        field = value
+        invalidate()
+    }
 
     /** Number of visible items in the picker */
     var visibleItems: Int = 3

@@ -5,6 +5,21 @@ developed as alternative to the default `NumberPicker` widget, which is not cust
 has some issues. The library does not have many options itself, but it is easy to expand. Feel free
 to request new features or report bugs.
 
+## Examples
+
+### Standard number picker
+
+![Standard number picker](https://github.com/Stonks-tech/GoodNumberPicker/blob/master/media/number-picker.gif)
+
+### Number picker with custom overlay
+
+![Custom overlay example](https://github.com/Stonks-tech/GoodNumberPicker/blob/master/media/custom-overlay.gif)
+
+### Drawable picker
+
+![Drawable picker](https://github.com/Stonks-tech/GoodNumberPicker/blob/master/media/drawable-picker.gif)
+
+
 ## Getting Started
 
 ### Gradle
@@ -128,7 +143,7 @@ numberPicker.onSelectedPositionChanged = { index, item ->
 ```
 
 ## Custom Items
-You can implement your completely custom item. It gives you possibility to draw anything on canvas in a `draw` method. Here example of implementation of DrawableNumberPickerItem:
+You can implement your completely custom item by extending `NumberPickerItem` interface. It gives you possibility to draw anything on canvas in a `draw` method. Here example of implementation of DrawableNumberPickerItem:
 ```kotlin
 class DrawableNumberPickerItem(val drawable: Drawable) : NumberPickerItem {
     private var _style: GoodNumberPickerStyle = GoodNumberPickerStyle.default
@@ -167,3 +182,41 @@ class DrawableNumberPickerItem(val drawable: Drawable) : NumberPickerItem {
 ```
 
 ## Custom Overlay
+You can implement your completely custom overlay by extending `PickerOverlay` interface. It gives you possibility to draw anything on canvas in a `draw` method. Here example of implementation of `DrawablePickerOverlay`:
+```kotlin
+class DrawablePickerOverlay(
+    private val _topDrawable: Drawable,
+    private val _bottomDrawable: Drawable
+) : PickerOverlay {
+    private var _style: GoodNumberPickerStyle = GoodNumberPickerStyle.default
+    override fun styleChanged(style: GoodNumberPickerStyle) {
+        _style = style
+    }
+
+    override fun draw(canvas: Canvas, centerItemRect: Rect) {
+        _topDrawable.setBounds(
+            0,
+            0,
+            canvas.width,
+            centerItemRect.top
+        )
+        _topDrawable.draw(canvas)
+        _bottomDrawable.setBounds(
+            0,
+            centerItemRect.bottom,
+            canvas.width,
+            canvas.height
+        )
+        _bottomDrawable.draw(canvas)
+    }
+
+    companion object {
+        fun symmetric(topDrawable: Drawable): DrawablePickerOverlay {
+            return DrawablePickerOverlay(topDrawable, RotateDrawable().apply {
+                drawable = topDrawable.constantState?.newDrawable()!!.mutate()
+                this.fromDegrees = 180f
+            })
+        }
+    }
+}
+```
