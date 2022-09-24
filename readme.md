@@ -8,16 +8,24 @@ to request new features or report bugs.
 ## Examples
 
 ### Standard number picker
+<img
+alt="Standard number picker"
+src="https://github.com/Stonks-tech/GoodNumberPicker/blob/master/media/number-picker.gif" height="200" />
 
-![Standard number picker](https://github.com/Stonks-tech/GoodNumberPicker/blob/master/media/number-picker.gif)
 
 ### Number picker with custom overlay
 
-![Custom overlay example](https://github.com/Stonks-tech/GoodNumberPicker/blob/master/media/custom-overlay.gif)
+<img
+alt="Custom overlay example"
+src="https://github.com/Stonks-tech/GoodNumberPicker/blob/master/media/custom-overlay.gif" 
+height="200" />
 
 ### Drawable picker
 
-![Drawable picker](https://github.com/Stonks-tech/GoodNumberPicker/blob/master/media/drawable-picker.gif)
+<img
+alt="Drawable picker"
+src="https://github.com/Stonks-tech/GoodNumberPicker/blob/master/media/drawable-picker.gif"
+height="200" />
 
 
 ## Getting Started
