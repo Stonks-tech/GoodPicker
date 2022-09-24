@@ -1,8 +1,8 @@
 # GoodNumberPicker
 
-`GoodNumberPicker` is a Android library that provides a number picker with customizable UI. It was
+`GoodPicker` is an Android library that provides a picker with customizable UI. It was
 developed as alternative to the default `NumberPicker` widget, which is not customizable enough and
-has some issues. The library does not have many options itself, but it is easy to expand. Feel free
+has some issues. The library does not have many options itself, but it is easy to expand so you can implement any UI you can imagine. Feel free
 to request new features or report bugs.
 
 ## Examples
@@ -44,7 +44,7 @@ Add view to your layout:
 
 ```xml
 
-<tech.stonks.goodnumberpicker.GoodNumberPicker android:id="@+id/number_picker"
+<tech.stonks.goodpicker.GoodPicker android:id="@+id/number_picker"
     android:textColor="@color/picker_text_color" android:layout_margin="16dp"
     app:overlayColor="#00ff00" android:layout_marginHorizontal="16dp" android:font="@font/raleway"
     android:layout_gravity="center" android:layout_marginVertical="8dp" android:textFontWeight="900"
@@ -117,11 +117,11 @@ numberPicker.itemFormatter = { index, item ->
         }
 
         styleChanged(
-            style.copy(
-                textStyle = style.textStyle.copy(
+            style.modifyCustomStyle<TextStyle> {
+                this.copy(
                     textColor = color
                 )
-            )
+            }
         )
     }
 }
@@ -134,28 +134,29 @@ the same way you can change any field of style to customize item.
 
 ```kotlin
 numberPicker.onSelectedPositionChanged = { index, item ->
+    
     item.apply {
         styleChanged(
-            numberPicker.style.copy(
-                textStyle = numberPicker.style.textStyle.copy(
+            numberPicker.style.modifyCustomStyle<TextStyle> {
+                this.copy(
                     textColor = when (index % 3) {
                         0 -> Color.RED
                         1 -> Color.GREEN
                         else -> Color.BLUE
                     }
                 )
-            )
+            }
         )
     }
 }
 ```
 
 ## Custom Items
-You can implement your completely custom item by extending `NumberPickerItem` interface. It gives you possibility to draw anything on canvas in a `draw` method. Here example of implementation of DrawableNumberPickerItem:
+You can implement your completely custom item by extending `PickerItem` interface. It gives you possibility to draw anything on canvas in a `draw` method. Here example of implementation of DrawableNumberPickerItem:
 ```kotlin
-class DrawableNumberPickerItem(val drawable: Drawable) : NumberPickerItem {
-    private var _style: GoodNumberPickerStyle = GoodNumberPickerStyle.default
-    override val style: GoodNumberPickerStyle
+class DrawablePickerItem(val drawable: Drawable) : PickerItem {
+    private var _style: GoodPickerStyle = GoodPickerStyle.default
+    override val style: GoodPickerStyle
         get() = _style
     private val _drawableStyle: DrawableStyle
         get() {
@@ -175,13 +176,13 @@ class DrawableNumberPickerItem(val drawable: Drawable) : NumberPickerItem {
         canvas.restore()
     }
 
-    override fun styleChanged(style: GoodNumberPickerStyle) {
+    override fun styleChanged(style: GoodPickerStyle) {
         _style = style //after assignment you might want to invalidate your field to update paint or other things
     }
 
     companion object {
-        fun fromResource(context: Context, resId: Int): DrawableNumberPickerItem {
-            return DrawableNumberPickerItem(
+        fun fromResource(context: Context, resId: Int): DrawablePickerItem {
+            return DrawablePickerItem(
                 ContextCompat.getDrawable(context, resId)!!
             )
         }
@@ -196,8 +197,8 @@ class DrawablePickerOverlay(
     private val _topDrawable: Drawable,
     private val _bottomDrawable: Drawable
 ) : PickerOverlay {
-    private var _style: GoodNumberPickerStyle = GoodNumberPickerStyle.default
-    override fun styleChanged(style: GoodNumberPickerStyle) {
+    private var _style: GoodPickerStyle = GoodPickerStyle.default
+    override fun styleChanged(style: GoodPickerStyle) {
         _style = style
     }
 
