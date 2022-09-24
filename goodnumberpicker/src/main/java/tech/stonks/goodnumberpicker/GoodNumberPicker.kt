@@ -3,27 +3,20 @@ package tech.stonks.goodnumberpicker
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
-import androidx.annotation.ColorInt
-import androidx.annotation.Dimension
-import androidx.annotation.FontRes
-import tech.stonks.goodnumberpicker.GoodNumberPicker.TextStyle.Companion.DEFAULT_OVERLAY_COLOR
-import tech.stonks.goodnumberpicker.GoodNumberPicker.TextStyle.Companion.DEFAULT_TEXT_COLOR
-import tech.stonks.goodnumberpicker.GoodNumberPicker.TextStyle.Companion.DEFAULT_VISIBLE_ITEMS
-import tech.stonks.goodnumberpicker.common.getColorOrFetchFromResource
 import tech.stonks.goodnumberpicker.common.getColorStateListOrFetchFromResource
-import tech.stonks.goodnumberpicker.common.getDimensionOrFetchFromResource
 import tech.stonks.goodnumberpicker.common.getRepeatableRange
-import tech.stonks.goodnumberpicker.common.getResourceIdOrNull
 import tech.stonks.goodnumberpicker.common.obtainAttributes
 import tech.stonks.goodnumberpicker.common.toRepeatableIndex
+import tech.stonks.goodnumberpicker.formatter.SelectedTextItemFormatter
 import tech.stonks.goodnumberpicker.item.NumberPickerItem
 import tech.stonks.goodnumberpicker.item.TextNumberPickerItem
 import tech.stonks.goodnumberpicker.overlay.LinesPickerOverlay
 import tech.stonks.goodnumberpicker.overlay.PickerOverlay
+import tech.stonks.goodnumberpicker.styles.GoodNumberPickerStyle
+import tech.stonks.goodnumberpicker.styles.TextStyle.Companion.DEFAULT_TEXT_COLOR
 import kotlin.math.roundToInt
 
 open class GoodNumberPicker : View {
@@ -47,7 +40,7 @@ open class GoodNumberPicker : View {
     }
 
     /** Style of the picker, see `GoodNumberPicker.Style`. Basically it contains all the fields that are available in xml */
-    var style: Style = Style.default
+    var style: GoodNumberPickerStyle = GoodNumberPickerStyle.default
         set(value) {
             field = value
             publishChangedStyle()
@@ -119,25 +112,8 @@ open class GoodNumberPicker : View {
     private var _textColorStateList: ColorStateList = ColorStateList.valueOf(DEFAULT_TEXT_COLOR)
         set(value) {
             field = value
-            itemFormatter = { index, item ->
-                item.apply {
-                    val color = if (index == selectedPosition) {
-                        value.getColorForState(
-                            intArrayOf(android.R.attr.state_selected),
-                            DEFAULT_TEXT_COLOR
-                        )
-                    } else {
-                        value.defaultColor
-                    }
-
-                    styleChanged(
-                        style.copy(
-                            textStyle = style.textStyle.copy(
-                                textColor = color
-                            )
-                        )
-                    )
-                }
+            itemFormatter = SelectedTextItemFormatter(value) {
+                it == selectedPosition
             }
         }
 
@@ -230,34 +206,7 @@ open class GoodNumberPicker : View {
                 R.styleable.GoodNumberPicker_android_textColor,
                 DEFAULT_TEXT_COLOR
             )
-            style = Style(
-                visibleItems = getInteger(
-                    R.styleable.GoodNumberPicker_visibleItems,
-                    DEFAULT_VISIBLE_ITEMS
-                ),
-                overlayColor = getColorOrFetchFromResource(
-                    context,
-                    R.styleable.GoodNumberPicker_overlayColor,
-                    DEFAULT_OVERLAY_COLOR
-                ),
-                textStyle = TextStyle(
-                    font = getResourceIdOrNull(R.styleable.GoodNumberPicker_android_font),
-                    textColor = getColorOrFetchFromResource(
-                        context,
-                        R.styleable.GoodNumberPicker_android_textColor,
-                        DEFAULT_TEXT_COLOR
-                    ),
-                    textSize = getDimensionOrFetchFromResource(
-                        context,
-                        R.styleable.GoodNumberPicker_android_textSize,
-                        TextStyle.DEFAULT_TEXT_SIZE
-                    ),
-                    fontWeight = getInteger(
-                        R.styleable.GoodNumberPicker_android_textFontWeight,
-                        TextStyle.DEFAULT_FONT_WEIGHT
-                    )
-                )
-            )
+            style = GoodNumberPickerStyle.fromTypedArray(this, context)
         }
         publishChangedStyle()
     }
@@ -281,46 +230,4 @@ open class GoodNumberPicker : View {
         visibleItems = style.visibleItems
     }
 
-    data class Style(
-        val visibleItems: Int,
-        @ColorInt
-        val overlayColor: Int,
-        val textStyle: TextStyle
-    ) {
-        companion object {
-            val default = Style(
-                visibleItems = 3,
-                overlayColor = DEFAULT_OVERLAY_COLOR,
-                textStyle = TextStyle.default
-            )
-        }
-    }
-
-    data class TextStyle(
-        @FontRes
-        val font: Int?,
-        @ColorInt
-        val textColor: Int,
-        @Dimension
-        val textSize: Float,
-        //This will be applied only if API >= 28
-        //If you want to apply various font weights on older android versions use separate font
-        //resources for each weight
-        val fontWeight: Int
-    ) {
-        companion object {
-            const val DEFAULT_VISIBLE_ITEMS = 3
-            const val DEFAULT_FONT_WEIGHT = 400
-            const val DEFAULT_TEXT_SIZE = 50f
-            const val DEFAULT_TEXT_COLOR = Color.BLACK
-            const val DEFAULT_OVERLAY_COLOR = Color.BLACK
-
-            val default = TextStyle(
-                font = null,
-                textColor = DEFAULT_TEXT_COLOR,
-                textSize = DEFAULT_TEXT_SIZE,
-                fontWeight = DEFAULT_FONT_WEIGHT
-            )
-        }
-    }
 }

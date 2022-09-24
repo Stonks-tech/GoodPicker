@@ -71,3 +71,19 @@ fun TypedArray.getDimensionOrFetchFromResource(
         defValue
     }
 }
+
+fun TypedArray.getDimensionPixelSizeOrFetchFromResource(
+    context: Context,
+    index: Int,
+    defValue: Int
+): Int {
+    return if (hasValue(index))
+        getDimensionPixelSize(index, defValue)
+    else try {
+        context.resources.getDimensionPixelSize(
+            getResourceIdOrNull(index)!!
+        )
+    } catch (ex: Exception) {
+        defValue
+    }
+}

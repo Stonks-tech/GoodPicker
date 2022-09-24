@@ -8,13 +8,16 @@ import android.graphics.Typeface
 import android.os.Build
 import androidx.core.content.res.ResourcesCompat
 import tech.stonks.goodnumberpicker.GoodNumberPicker
+import tech.stonks.goodnumberpicker.styles.GoodNumberPickerStyle
+import tech.stonks.goodnumberpicker.styles.TextStyle
 
 class TextNumberPickerItem(
     private val _context: Context,
     private val _text: String,
-    private var _style: GoodNumberPicker.Style
+    private var _style: GoodNumberPickerStyle
 ) : NumberPickerItem {
-
+    override val style: GoodNumberPickerStyle
+        get() = _style
     private var _paint: Paint = Paint().apply {
         textAlign = Paint.Align.CENTER
     }
@@ -32,7 +35,7 @@ class TextNumberPickerItem(
         )
     }
 
-    override fun styleChanged(style: GoodNumberPicker.Style) {
+    override fun styleChanged(style: GoodNumberPickerStyle) {
         _style = style
         updatePaint()
     }
@@ -45,7 +48,7 @@ class TextNumberPickerItem(
 
     private fun updatePaint() {
         _paint.apply {
-            val style = _style.textStyle
+            val style = _style.getCustomStyle<TextStyle>() ?: throw IllegalStateException("TextStyle is required")
             color = style.textColor
             textSize = style.textSize
             typeface = if (style.font != null) {
@@ -54,7 +57,7 @@ class TextNumberPickerItem(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     Typeface.create(
                         font,
-                        _style.textStyle.fontWeight,
+                        style.fontWeight,
                         false
                     )
                 } else {

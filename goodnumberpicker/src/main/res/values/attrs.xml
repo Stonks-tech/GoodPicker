@@ -5,7 +5,9 @@
         <attr name="android:textColor" format="color|reference"/>
         <attr name="android:textSize" format="dimension|reference"/>
         <attr name="android:textFontWeight" format="integer"/>
+        <attr name="android:tint" format="color|reference"/>
         <attr name="overlayColor" format="color|reference"/>
         <attr name="visibleItems" format="integer"/>
+        <attr name="size" format="dimension|reference"/>
     </declare-styleable>
 </resources>
