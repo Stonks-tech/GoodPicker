@@ -1,8 +1,54 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.29.0"
+    }
+}
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-    id 'com.android.application' version '7.2.2' apply false
-    id 'com.android.library' version '7.2.2' apply false
+    id 'com.android.application' version '7.3.0' apply false
+    id 'com.android.library' version '7.3.0' apply false
     id 'org.jetbrains.kotlin.android' version '1.7.10' apply false
+}
+
+allprojects {
+    apply plugin: "maven-publish"
+    apply plugin: 'com.jfrog.artifactory'
+    repositories {
+        maven {
+            url "${artifactory_contextUrl}/stonks-gradle-release"
+        }
+        google()
+        mavenCentral()
+    }
+}
+
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
+    publish {
+        repository {
+            repoKey = 'stonks-gradle-release'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+        }
+        defaults {
+            publications('release')
+            publishArtifacts = true
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'stonks-gradle-release'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+        }
+    }
 }
 
 task clean(type: Delete) {

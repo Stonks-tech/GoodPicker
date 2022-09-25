@@ -32,10 +32,31 @@ height="200" />
 
 ### Gradle
 
-Add dependency to your `build.gradle` file:
-
+Add repository in project level `build.gradle`:
 ```groovy
-implementation 'FILL_IT'
+allprojects {
+    repositories {
+        maven {
+            url "https://stonks.jfrog.io/artifactory/stonks-gradle-release"
+        }
+    }
+} 
+```
+or if your gradle is set up to define repositories in `settings.gradle`:
+```groovy
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        maven {
+            url "https://stonks.jfrog.io/artifactory/stonks-gradle-release"
+        }
+    }
+}
+```
+
+Add dependency to your `build.gradle` file:
+```groovy
+implementation 'tech.stonks:goodpicker:0.9.0'
 ```
 
 ### Layout
