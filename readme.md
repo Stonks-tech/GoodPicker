@@ -3,7 +3,7 @@
 `GoodPicker` is an Android library that provides a picker with customizable UI. It was
 developed as alternative to the default `NumberPicker` widget, which is not customizable enough and
 has some issues. The library does not have many options itself, but it is easy to expand so you can implement any UI you can imagine. Feel free
-to request new features or report bugs.
+to request new features or report bugs. You can find more information [here](https://stonks.tech/android-numberpicker-customization-and-alternatives/)
 
 ## Examples
 
