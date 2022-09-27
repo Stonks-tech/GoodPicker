@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
         val numberPicker = findViewById<tech.stonks.goodpicker.GoodPicker>(
             R.id.number_picker
         )
+        numberPicker.selectedPosition = 5
         numberPicker.onSelectedPositionChanged = { position ->
             textView.text = "Position: $position"
         }

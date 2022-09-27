@@ -218,15 +218,17 @@ open class GoodPicker : View {
         publishChangedStyle()
     }
 
-    private fun drawPositionToAbsolutePosition(index: Int): Int {
+    private fun drawPositionToAbsolutePosition(index: Int): Int = try {
         val value = -((_currentValue / _itemHeight.toFloat()).roundToInt() - index)
-        return if (value < 0) {
+        if (value < 0) {
             items.size + value
         } else if (value >= items.size) {
             value - items.size
         } else {
             value
         }
+    } catch (ex: Exception) {
+        0
     }
 
     private fun publishChangedStyle() {
