@@ -56,7 +56,7 @@ dependencyResolutionManagement {
 
 Add dependency to your `build.gradle` file:
 ```groovy
-implementation 'tech.stonks:goodpicker:0.9.0'
+implementation 'tech.stonks:goodpicker:0.9.1'
 ```
 
 ### Layout

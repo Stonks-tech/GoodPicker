@@ -75,17 +75,20 @@ open class GoodPicker : View {
     var onSelectedPositionChanged: ((Int) -> Unit) = {}
 
     /** You can set it to change selected position programmatically. */
-    val selectedPosition: Int
+    var selectedPosition: Int
+        set(value) {
+            _scrollHandler.moveBy(selectedPosition - value)
+        }
         get() {
             return drawPositionToAbsolutePosition(((visibleItems - 1) / 2))
         }
 
     /** Overlay that will be drawn above picked values. By default it will display two lines */
     var pickerOverlay: PickerOverlay = LinesPickerOverlay()
-    set(value) {
-        field = value
-        invalidate()
-    }
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     /** Number of visible items in the picker */
     var visibleItems: Int = 3

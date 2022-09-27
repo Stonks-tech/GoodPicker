@@ -89,7 +89,7 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
         return true
     }
 
-    private fun moveBy(itemsCount: Int) {
+    fun moveBy(itemsCount: Int) {
         animateTo(currentValue + (itemsCount * itemHeight))
     }
 
