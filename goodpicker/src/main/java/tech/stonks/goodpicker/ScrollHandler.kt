@@ -8,6 +8,7 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.core.animation.addListener
+import androidx.core.animation.doOnEnd
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -43,10 +44,10 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
      * Final Scroll value will be rounded to value divisible by this number
      */
     var itemHeight: Int = 1
-    set(value) {
-        field = value
-        currentValue = itemHeight
-    }
+        set(value) {
+            field = value
+            currentValue = itemHeight
+        }
     private var _previousY: Int = 0
     private var _startY: Int = 0
 
@@ -71,12 +72,15 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
                 _velocityTracker.addMovement(event)
                 _previousY = 0
                 _velocityTracker.computeCurrentVelocity(100)
-                if(abs(event.y - _startY) < DELTA_THRESHOLD) {
+                val delta = abs(event.y - _startY)
+                if (delta < DELTA_THRESHOLD) {
                     v?.performClick()
-                    if(event.y.toInt() in incrementYRange) {
+                    if (event.y.toInt() in incrementYRange) {
                         moveBy(-1)
-                    } else if(event.y.toInt() in decrementYRange) {
+                    } else if (event.y.toInt() in decrementYRange) {
                         moveBy(1)
+                    } else {
+                        roundToNearestItem()
                     }
                 } else if (abs(_velocityTracker.yVelocity) > VELOCITY_THRESHOLD) {
                     fling(_velocityTracker.yVelocity.toInt())
@@ -114,10 +118,9 @@ class ScrollHandler(private val _context: Context) : View.OnTouchListener {
         _scrollAnimator.duration = ROUND_DURATION.toLong()
         _scrollAnimator.setIntValues(
             currentValue,
-            value
+            value.roundToNearest(itemHeight)
         )
         _scrollAnimator.start()
-
     }
 
     private fun Int.roundToNearest(roundTo: Int): Int {

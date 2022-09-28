@@ -149,7 +149,7 @@ open class GoodPicker : View {
                 items[index]
             ).draw(
                 canvas,
-                ((index - _scrolledItems - OFFSCREEN_ITEMS) * _itemHeight.toFloat()) + _currentValue,
+                ((index - _scrolledItems) * _itemHeight.toFloat()) + _currentValue,
                 width,
                 _itemHeight
             )

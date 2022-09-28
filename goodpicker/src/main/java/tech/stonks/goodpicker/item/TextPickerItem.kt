@@ -26,10 +26,11 @@ class TextPickerItem(
      * param y is the y coordinate of the top of the item
      */
     override fun draw(canvas: Canvas, y: Float, width: Int, height: Int) {
+        _textBounds = calculateTextBounds()
         canvas.drawText(
             _text,
-            (width - _textBounds.width()) / 2f,
-            y + ((height + _textBounds.height()) / 2f),
+            (width) / 2f,
+            y - ((height - _textBounds.height()) / 2f),
             _paint
         )
     }

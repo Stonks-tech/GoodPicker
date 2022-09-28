@@ -11,8 +11,8 @@ android {
     defaultConfig {
         minSdk 22
         targetSdk 33
-        versionCode 8
-        versionName "0.9.2"
+        versionCode 9
+        versionName "0.9.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -40,7 +40,7 @@ afterEvaluate {
             release(MavenPublication) {
                 groupId = "tech.stonks"
                 artifactId = "goodpicker"
-                version = "0.9.2"
+                version = "0.9.3"
 
                 artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
             }
